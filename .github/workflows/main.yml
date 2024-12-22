@@ -1,0 +1,29 @@
+name: Sync with Upstream Repository
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天同步一次
+  workflow_dispatch: # 手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Add Upstream
+        run: git remote add upstream https://github.com/cmliu/WorkerVless2sub.git
+
+      - name: Fetch and Merge Upstream
+        run: |
+          git fetch upstream
+          git merge upstream/main --allow-unrelated-histories
+
+      - name: Push Changes
+        run: git push origin main
